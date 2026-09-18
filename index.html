@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pay Vijay Prakash</title>
+  <style>
+    :root { --violet: #5b21b6; --ink: #181128; --muted: #706a7e; --soft: #f3efff; }
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px; font-family: Inter, Arial, sans-serif; color: var(--ink); background: radial-gradient(circle at top left,#b9a4ff 0,transparent 34%), linear-gradient(135deg,#30106b,#7c3aed); }
+    .card { width: min(100%, 430px); overflow: hidden; background: #fff; border-radius: 28px; box-shadow: 0 24px 64px rgba(19, 5, 56, .34); }
+    .top { padding: 28px 28px 20px; text-align: center; background: linear-gradient(135deg,#fbfaff,#eee7ff); }
+    .avatar { width: 78px; height: 78px; display: block; object-fit: cover; margin: 0 auto 14px; border: 4px solid white; border-radius: 50%; box-shadow: 0 7px 20px rgba(65, 28, 146, .2); }
+    h1 { margin: 0; font-size: 24px; } .top p { margin: 7px 0 0; color: var(--muted); }
+    .body { padding: 22px 28px 28px; } label { display: block; margin: 0 0 8px; font-weight: 700; font-size: 14px; }
+    input { width: 100%; padding: 14px; font: inherit; border: 1px solid #d8d1e6; border-radius: 12px; outline: none; } input:focus { border-color: var(--violet); box-shadow: 0 0 0 3px #ede9fe; }
+    .upi { display: flex; align-items: center; gap: 10px; margin: 16px 0; padding: 13px; border-radius: 14px; background: var(--soft); font-size: 14px; } .upi span { margin-left: auto; font-weight: 800; color: var(--violet); }
+    .qr { width: 240px; height: 240px; display: block; object-fit: contain; margin: 20px auto 8px; border-radius: 15px; border: 1px solid #e3deec; }
+    .scan { margin: 0 0 20px; text-align: center; color: var(--muted); font-size: 13px; }
+    button { width: 100%; border: 0; border-radius: 14px; padding: 16px; cursor: pointer; color: #fff; background: linear-gradient(135deg,#4c1d95,#7c3aed); font-size: 16px; font-weight: 800; box-shadow: 0 10px 20px rgba(91,33,182,.25); } button:hover { filter: brightness(1.06); }
+    dialog { width: min(90%, 360px); padding: 28px; border: 0; border-radius: 20px; text-align: center; box-shadow: 0 20px 70px rgba(0,0,0,.3); } dialog::backdrop { background: rgba(18,7,42,.58); } .check { font-size: 42px; } dialog p { color: var(--muted); line-height: 1.5; } .secondary { margin-top: 10px; color: var(--violet); background: #eee7ff; box-shadow: none; }
+    .note { margin-top: 14px; text-align: center; font-size: 12px; color: var(--muted); }
+    .payment-info { margin-top: 24px; padding: 17px; border: 1px solid #e7e1f1; border-radius: 16px; background: #fcfbff; text-align: left; }
+    .payment-info h2 { margin: 0 0 10px; font-size: 16px; } .payment-info p { margin: 7px 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .payment-info strong { color: var(--ink); } .safe { padding-top: 8px; border-top: 1px solid #e9e4f1; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <section class="top">
+      <img class="avatar" src="assets/vijay-prakash.jpeg" alt="Vijay Prakash">
+      <h1>Pay Vijay Prakash</h1>
+      <p>Enter an amount or scan the QR code</p>
+    </section>
+    <section class="body">
+      <label for="amount">Amount (₹)</label>
+      <input id="amount" type="number" min="1" inputmode="decimal" placeholder="e.g. 100">
+      <div class="upi">UPI ID <span id="upiDisplay">vijayprakash907017@ybl</span></div>
+      <img class="qr" src="assets/payment-qr-only.jpeg" alt="Vijay Prakash payment QR code">
+      <p class="scan">Scan with any UPI app to pay</p>
+      <button type="button" id="payButton">Open UPI App to Pay</button>
+      <p class="note">Tapping the button opens an available UPI app on your phone.</p>
+      <section class="payment-info" aria-label="Payment information">
+        <h2>Payment Information</h2>
+        <p><strong>Payment methods:</strong> Any compatible UPI app, including PhonePe, Google Pay, Paytm and BHIM.</p>
+        <p><strong>After payment:</strong> Complete the payment in your UPI app, then return here and tap “Yes, I Have Paid”.</p>
+        <p class="safe"><strong>Stay safe:</strong> Never share your UPI PIN, OTP, card number, or bank password. You only need to enter your UPI PIN inside your trusted UPI app.</p>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="paymentDialog">
+    <div class="check">✓</div>
+    <h2>Did you complete the payment?</h2>
+    <p>After completing payment in your UPI app, confirm it below.</p>
+    <button id="confirmButton">Yes, I Have Paid</button>
+    <button class="secondary" id="closeButton">Go Back</button>
+  </dialog>
+
+  <dialog id="successDialog">
+    <div class="check">🎉</div>
+    <h2>Thank You!</h2>
+    <p>You have confirmed that the payment is complete.</p>
+    <button id="doneButton">Done</button>
+  </dialog>
+
+  <script>
+    // Replace this with your complete, verified UPI ID if its suffix is not @upi.
+    const UPI_ID = 'vijayprakash907017@ybl';
+    const PAYEE_NAME = 'Vijay Prakash';
+    const amountInput = document.getElementById('amount');
+    const paymentDialog = document.getElementById('paymentDialog');
+    const successDialog = document.getElementById('successDialog');
+
+    document.getElementById('payButton').addEventListener('click', () => {
+      const amount = Number(amountInput.value);
+      if (!amount || amount <= 0) { amountInput.focus(); alert('Please enter a valid amount.'); return; }
+      const upiLink = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${encodeURIComponent(amount.toFixed(2))}&cu=INR&tn=${encodeURIComponent('Payment to Vijay Prakash')}`;
+      window.location.href = upiLink;
+      setTimeout(() => paymentDialog.showModal(), 1200);
+    });
+    document.getElementById('confirmButton').addEventListener('click', () => { paymentDialog.close(); successDialog.showModal(); });
+    document.getElementById('closeButton').addEventListener('click', () => paymentDialog.close());
+    document.getElementById('doneButton').addEventListener('click', () => successDialog.close());
+  </script>
+</body>
+</html>
